@@ -1,1 +1,39 @@
-ddddd
+import { Component } from '@angular/core';
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+
+@Component({
+  selector: 'app-parent-component',
+  template: `
+    <button (click)="openDialog()">Open Dialog</button>
+  `
+})
+export class ParentComponent {
+  constructor(private dialogService: DialogService) {}
+
+  openDialog() {
+    const dialogRef = this.dialogService.open(ChildComponent, {
+      data: { message: 'Hello from parent!' }
+    });
+
+    dialogRef.onClose.subscribe((result: any) => {
+      console.log('Dialog closed with result:', result);
+    });
+  }
+}
+
+@Component({
+  selector: 'app-child-component',
+  template: `
+    <p>{{ data.message }}</p>
+    <button (click)="closeDialog()">Close Dialog</button>
+  `
+})
+export class ChildComponent {
+  constructor(private ref: DynamicDialogRef, private config: DynamicDialogConfig) {
+    console.log('Received data from parent:', this.config.data);
+  }
+
+  closeDialog() {
+    this.ref.close('Data sent back to parent');
+  }
+}
